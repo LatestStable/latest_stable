@@ -1,8 +1,6 @@
 # LatestStable
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/latest_stable`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+LatestStable makes it dead simple to stay up to date with the upstream changes of your gem dependencies.
 
 ## Installation
 
@@ -22,7 +20,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+When you run latest_stable from the terminal in a git directory.
+
+    $ latest_stable
+
+It will do the following things for you.
+
+* It will checkout master and run your test suite to ensure that tests
+  are passing initially.
+* Check out a new branch 'update_gems_to_latest_stable'
+* Gets the list of outdated gems and for each of those
+  * updates the gem
+  * reruns your test suite
+  * commits updated gem if tests pass or reverts update if they fail.
+
+Afterwards you have a branch where all gems that could cleanly be updated are.
 
 ## Development
 
@@ -32,8 +44,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/latest_stable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/LatestStable/latest_stable. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 ## License
 
