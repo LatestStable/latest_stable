@@ -1,6 +1,34 @@
 #!/usr/bin/env ruby
 
-require 'latest_stable'
+require 'bundler'
 
-puts "Already on latest stable"
+def parse_lockfile
+  Hash[File.readlines('Gemfile.lock').map do |line|
+    if md = line.match(/\A {4}(?<gem_name>\S+) \((?<version>[^)]+)\)/)
+      [md[:gem_name], md[:version]]
+    end
+  end.compact]
+end
 
+old_lockfile = parse_lockfile
+Bundler.with_clean_env { `bundle update` }
+new_lockfile = parse_lockfile
+
+updated_gems = (old_lockfile.keys + new_lockfile.keys).uniq.select do |gem_name|
+  old_lockfile[gem_name] != new_lockfile[gem_name]
+end
+
+if updated_gems.empty?
+  puts 'Already on latest stable'
+else
+  updated_gems.each do |gem_name|
+    if old_lockfile.key?(gem_name) && new_lockfile.key?(gem_name)
+      puts "Updated '#{gem_name}' from #{old_lockfile[gem_name]} to #{new_lockfile[gem_name]}"
+    elsif old_lockfile.key?(gem_name)
+      puts "Removed '#{gem_name}'" # TODO specs
+    else
+      puts "Added '#{gem_name}' #{new_lockfile[gem_name]}"
+    end
+  end
+  puts 'success'
+end

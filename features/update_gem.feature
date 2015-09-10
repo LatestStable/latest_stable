@@ -14,3 +14,15 @@ Feature: Update gem to latest version
     Given a Gemfile.lock where "papla" is set to version "0.1.2"
     When I run `latest_stable`
     Then the output should contain "Already on latest stable"
+
+  Scenario: Gem needs minor version update and tests pass with new version
+    Given a Gemfile.lock where "papla" is set to version "0.1.1"
+    When I run `latest_stable`
+    Then the output should contain:
+      """
+      Updated 'papla' from 0.1.1 to 0.1.2
+      Added 'i18n' 0.7.0
+      success
+      """
+    And the file "Gemfile.lock" should contain "papla (0.1.2)"
+    And the file "Gemfile.lock" should contain "i18n (0.7.0)"
