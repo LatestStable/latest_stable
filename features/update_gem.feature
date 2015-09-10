@@ -11,6 +11,14 @@ Feature: Update gem to latest version
 
   Scenario: Gem needs minor version update and tests pass with new version
     Given a bundle where a gem is out of date
+    And a Rakefile with a passing default task
     When I run `latest_stable`
     Then then I should see which gems have been updated
     And all gems in the bundle should be up to date
+
+  Scenario: Gem needs minor version update and tests fail with new version
+    Given a bundle where a gem is out of date
+    And a test that will fail for the new version of the gem
+    When I run `latest_stable`
+    Then I should see that the test failed
+    And the bundle should not have changed
