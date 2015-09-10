@@ -1,3 +1,6 @@
 #!/usr/bin/env ruby
 
-require "latest_stable"
+require 'latest_stable'
+
+puts "Already on latest stable"
+
