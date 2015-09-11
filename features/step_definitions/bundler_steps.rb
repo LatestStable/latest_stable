@@ -1,6 +1,6 @@
 Given(/^a Rakefile with a passing default task$/) do
   step('a file named "Rakefile" with:',
-     <<-EOS.strip_heredoc
+    <<-EOS.strip_heredoc
     require 'rake/testtask'
 
     Rake::TestTask.new do |t|

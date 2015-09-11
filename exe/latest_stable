@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 require 'bundler'
+require 'English'
 
 def parse_lockfile(lockfile = File.read('Gemfile.lock'))
   Hash[lockfile.each_line.map do |line|
-    if md = line.match(/\A {4}(?<gem_name>\S+) \((?<version>[^)]+)\)/)
-      [md[:gem_name], md[:version]]
-    end
+    match = line.match(/\A {4}(?<gem_name>\S+) \((?<version>[^)]+)\)/)
+    [match[:gem_name], match[:version]] if match
   end.compact]
 end
 
@@ -32,14 +32,14 @@ else
     if old_gemspecs.key?(gem_name) && new_gemspecs.key?(gem_name)
       puts "Updated '#{gem_name}' from #{old_gemspecs[gem_name]} to #{new_gemspecs[gem_name]}"
     elsif old_gemspecs.key?(gem_name)
-      puts "Removed '#{gem_name}'" # TODO specs
+      puts "Removed '#{gem_name}'" # TODO: specs
     else
-      puts "Added '#{gem_name}' #{new_gemspecs[gem_name]}"
+      puts "Added '#{gem_name}' #{new_gemspecs[gem_name]}" # TODO: specs
     end
   end
 
   `rake test`
-  if $?.exitstatus == 0
+  if $CHILD_STATUS.exitstatus == 0
     puts 'success'
   else
     puts 'Tests failed'
