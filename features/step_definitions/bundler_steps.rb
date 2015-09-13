@@ -1,6 +1,6 @@
 Given(/^a Rakefile with a passing default task$/) do
   step('a file named "Rakefile" with:',
-     <<-EOS.strip_heredoc
+    <<-EOS.strip_heredoc
     require 'rake/testtask'
 
     Rake::TestTask.new do |t|
@@ -87,17 +87,7 @@ Given(/^a bundle where a gem is out of date$/) do
 end
 
 Given(/^a test that will fail for the new version of the gem$/) do
-  step('a file named "Rakefile" with:',
-    <<-EOS.strip_heredoc
-    require 'rake/testtask'
-
-    Rake::TestTask.new do |t|
-      t.pattern = '*_test.rb'
-    end
-
-    task default: :test
-    EOS
-  )
+  step('a Rakefile with a passing default task')
   step(
     'a file named "gem_version_of_papla_test.rb" with:',
     <<-EOS.strip_heredoc
