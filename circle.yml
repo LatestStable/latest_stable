@@ -1,6 +1,0 @@
-test:
-  override:
-    - mkdir -p $CIRCLE_TEST_REPORTS/rspec
-    - bundle exec rspec --format documentation --color --format RspecJunitFormatter --out $CIRCLE_TEST_REPORTS/rspec/rspec.xml spec
-    - mkdir -p $CIRCLE_TEST_REPORTS/cucumber
-    - bundle exec cucumber --format json --out $CIRCLE_TEST_REPORTS/cucumber/tests.cucumber
