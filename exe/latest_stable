@@ -32,7 +32,7 @@ else
     if old_gemspecs.key?(gem_name) && new_gemspecs.key?(gem_name)
       puts "Updated '#{gem_name}' from #{old_gemspecs[gem_name]} to #{new_gemspecs[gem_name]}"
     elsif old_gemspecs.key?(gem_name)
-      puts "Removed '#{gem_name}'" # TODO: specs
+      puts "Removed '#{gem_name}'"
     else
       puts "Added '#{gem_name}' #{new_gemspecs[gem_name]}" # TODO: specs
     end

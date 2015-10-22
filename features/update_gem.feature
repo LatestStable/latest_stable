@@ -22,3 +22,8 @@ Feature: Update gem to latest version
     When I run `latest_stable`
     Then I should see that the test failed
     And the bundle should not have changed
+
+  Scenario: Gem is no longer a dependency after update
+    Given a bundle where a gem is out of date and its newer version removes a dependency
+    When I run `latest_stable`
+    Then I should see that the dependency has been removed
