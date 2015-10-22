@@ -18,7 +18,7 @@ Given(/^a bundle where all gems are up to date$/) do
     <<-EOS.strip_heredoc
     source 'https://rubygems.org'
     gem 'papla'
-    gem 'minitest'
+    gem 'minitest', '5.8.0'
     gem 'rake'
     EOS
   )
@@ -39,7 +39,7 @@ Given(/^a bundle where all gems are up to date$/) do
 
     DEPENDENCIES
       i18n
-      minitest
+      minitest (= 5.8.0)
       papla
       rake
 
