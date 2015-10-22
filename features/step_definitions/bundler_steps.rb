@@ -135,7 +135,7 @@ Then(/^the bundle should not have changed$/) do
   step('the file "Gemfile.lock" should contain "papla (0.1.1)"')
 end
 
-Given(/^a bundle where a gem is out of date and its newer version removes a dependency$/) do
+Given(/^a bundle where a gem is out of date and its newer version modifies its dependencies$/) do
   step(
     'a file named "Gemfile" with:',
     <<-EOS.strip_heredoc
@@ -176,6 +176,10 @@ Given(/^a bundle where a gem is out of date and its newer version removes a depe
   )
 end
 
-Then(/^I should see that the dependency has been removed$/) do
+Then(/^I should see that a dependency has been removed$/) do
   step('the output should contain:', "Removed 'highline'")
+end
+
+Then(/^I should see that a dependency has been added$/) do
+  step('the output should contain:', "Added 'sshkit' 1.")
 end

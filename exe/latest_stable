@@ -34,7 +34,7 @@ else
     elsif old_gemspecs.key?(gem_name)
       puts "Removed '#{gem_name}'"
     else
-      puts "Added '#{gem_name}' #{new_gemspecs[gem_name]}" # TODO: specs
+      puts "Added '#{gem_name}' #{new_gemspecs[gem_name]}"
     end
   end
 
