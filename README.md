@@ -24,17 +24,17 @@ When you run latest_stable from the terminal in a git directory.
 
     $ latest_stable
 
-It will do the following things for you.
+It will do the following things for you:
 
-* It will checkout master and run your test suite to ensure that tests
-  are passing initially.
-* Check out a new branch 'update_gems_to_latest_stable'
-* Gets the list of outdated gems and for each of those
+* checks out master and runs your test suite to ensure that tests
+  are passing initially
+* checks out a new branch 'update_gems_to_latest_stable'
+* gets the list of outdated gems and for each of those
   * updates the gem
   * reruns your test suite
-  * commits updated gem if tests pass or reverts update if they fail.
+  * commits updated gem if tests pass or reverts update if they fail
 
-Afterwards you have a branch where all gems that could cleanly be updated are.
+Afterwards you'll have a branch with all gems that could cleanly be updated.
 
 ## Development
 
