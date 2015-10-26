@@ -183,3 +183,7 @@ end
 Then(/^I should see that a dependency has been added$/) do
   step('the output should contain:', "Added 'sshkit' 1.")
 end
+
+When(/^I run latest_stable$/) do
+  step('I run `latest_stable`')
+end
