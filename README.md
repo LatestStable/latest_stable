@@ -1,5 +1,8 @@
 # LatestStable
 
+[![Circle CI](https://circleci.com/gh/LatestStable/latest_stable/tree/master.svg?style=shield)](https://circleci.com/gh/LatestStable/latest_stable/tree/master)
+[![Code Climate](https://codeclimate.com/github/LatestStable/latest_stable/badges/gpa.svg)](https://codeclimate.com/github/LatestStable/latest_stable)
+
 LatestStable makes it dead simple to stay up to date with the upstream changes of your gem dependencies.
 
 ## Installation

@@ -39,9 +39,6 @@ Rails/TimeZone:
 Rails/Date:
   Enabled: false
 
-RSpec/DescribeClass:
-  Enabled: false
-
 # Enable cops that are inactive by default:
 
 Style/ExtraSpacing:
