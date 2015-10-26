@@ -17,11 +17,13 @@ Feature: Update gem to latest version
     And all gems in the bundle should be up to date
 
   Scenario: Gem needs minor version update and tests fail with new version
-    Given a bundle where a gem is out of date
-    And a test that will fail for the new version of the gem
+    Given a bundle where two gems are out of date
+    And one of the gems will cause the tests to fail if updated
     When I run latest_stable
-    Then I should see that the test failed
-    And the bundle should not have changed
+    Then the good gem should be updated
+    And I should see that the good gem has been updated
+    But the bad gem should stay outdated
+    And I should see that the test failed for the bad gem
 
   Scenario: Gem dependencies changed after update
     Given a bundle where a gem is out of date and its newer version modifies its dependencies

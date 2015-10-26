@@ -21,14 +21,14 @@ old_gemspecs = parse_lockfile(old_lockfile)
 Bundler.with_clean_env { `bundle update` }
 new_gemspecs = parse_lockfile
 
-updated_gems = (old_gemspecs.keys + new_gemspecs.keys).uniq.select do |gem_name|
+changed_gems = (old_gemspecs.keys + new_gemspecs.keys).uniq.select do |gem_name|
   old_gemspecs[gem_name] != new_gemspecs[gem_name]
 end
 
-if updated_gems.empty?
+if changed_gems.empty?
   puts 'Already on latest stable'
 else
-  updated_gems.each do |gem_name|
+  changed_gems.each do |gem_name|
     if old_gemspecs.key?(gem_name) && new_gemspecs.key?(gem_name)
       puts "Updated '#{gem_name}' from #{old_gemspecs[gem_name]} to #{new_gemspecs[gem_name]}"
     elsif old_gemspecs.key?(gem_name)
@@ -38,11 +38,33 @@ else
     end
   end
 
-  `rake test`
+  Bundler.with_clean_env { `bundle exec rake test` }
   if $CHILD_STATUS.exitstatus == 0
     puts 'success'
   else
     puts 'Tests failed'
     reset_gemfile(old_lockfile)
+
+    updated_gems = changed_gems.select do |gem_name|
+      old_gemspecs.key?(gem_name) && new_gemspecs.key?(gem_name)
+    end
+
+    updated_gems.each do |gem_name|
+      old_step_lockfile = File.read('Gemfile.lock')
+
+      print "Updating '#{gem_name}' from #{old_gemspecs[gem_name]} to #{new_gemspecs[gem_name]} : "
+
+      Bundler.with_clean_env do
+        `bundle update #{gem_name}`
+        `bundle exec rake test`
+      end
+
+      if $CHILD_STATUS.exitstatus == 0
+        puts 'success'
+      else
+        puts 'Tests failed'
+        reset_gemfile(old_step_lockfile)
+      end
+    end
   end
 end
