@@ -1,3 +1,11 @@
+Given(/^a gemserver with (.*) installed$/) do |gem_file|
+  gem_file_path = "spec/fixtures/gems/#{gem_file}"
+
+  Bundler.with_clean_env do
+    `gem install #{gem_file_path} --install-dir /tmp/gemserver/ --source http://localhost:8808`
+  end
+end
+
 Given(/^a Rakefile with a passing default task$/) do
   step(
     'a file named "Rakefile" with:',
@@ -14,48 +22,41 @@ Given(/^a Rakefile with a passing default task$/) do
 end
 
 Given(/^a bundle where all gems are up to date$/) do
+  step('a gemserver with ls_example_gem-0.1.0.gem installed')
   step(
     'a file named "Gemfile" with:',
     <<-EOS.strip_heredoc
-    source 'https://rubygems.org'
-    gem 'papla'
-    gem 'minitest', '5.8.0'
-    gem 'rake'
+    source 'http://localhost:8808'
+    gem 'ls_example_gem'
     EOS
   )
   step(
     'a file named "Gemfile.lock" with:',
     <<-EOS.strip_heredoc
     GEM
-      remote: https://rubygems.org/
+      remote: http://localhost:8808/
       specs:
-        i18n (0.7.0)
-        minitest (5.8.0)
-        papla (0.1.2)
-          i18n
-        rake (10.4.2)
+        ls_example_gem (0.1.0)
 
     PLATFORMS
       ruby
 
     DEPENDENCIES
-      i18n
-      minitest (= 5.8.0)
-      papla
-      rake
-
-    BUNDLED WITH
-       1.10.6
+      ls_example_gem
     EOS
   )
 end
 
 Given(/^a bundle where a gem is out of date$/) do
+  step('a gemserver with ls_example_gem-0.1.0.gem installed')
+  step('a gemserver with ls_example_gem-0.2.0.gem installed')
+  step('a gemserver with minitest-5.9.0.gem installed')
+  step('a gemserver with rake-11.2.2.gem installed')
   step(
     'a file named "Gemfile" with:',
     <<-EOS.strip_heredoc
-    source 'https://rubygems.org'
-    gem 'papla'
+    source 'http://localhost:8808'
+    gem 'ls_example_gem'
     gem 'minitest'
     gem 'rake'
     EOS
@@ -64,35 +65,34 @@ Given(/^a bundle where a gem is out of date$/) do
     'a file named "Gemfile.lock" with:',
     <<-EOS.strip_heredoc
     GEM
-      remote: https://rubygems.org/
+      remote: https://localhost:8808/
       specs:
-        i18n (0.7.0)
-        minitest (5.8.0)
-        papla (0.1.1)
-          i18n
-        rake (10.4.2)
+        ls_example_gem (0.1.0)
+        minitest (5.9.0)
+        rake (11.2.2)
 
     PLATFORMS
       ruby
 
     DEPENDENCIES
-      i18n
-      minitest
-      papla
-      rake
-
-    BUNDLED WITH
-       1.10.6
+      ls_example_gem
     EOS
   )
 end
 
 Given(/^a bundle where two gems are out of date$/) do
+  step('a gemserver with ls_first_gem-0.1.0.gem installed')
+  step('a gemserver with ls_first_gem-0.2.0.gem installed')
+  step('a gemserver with ls_second_gem-0.1.0.gem installed')
+  step('a gemserver with ls_second_gem-0.2.0.gem installed')
+  step('a gemserver with minitest-5.9.0.gem installed')
+  step('a gemserver with rake-11.2.2.gem installed')
   step(
     'a file named "Gemfile" with:',
     <<-EOS.strip_heredoc
-    source 'https://rubygems.org'
-    gem 'papla'
+    source 'http://localhost:8808'
+    gem 'ls_first_gem'
+    gem 'ls_second_gem'
     gem 'minitest'
     gem 'rake'
     EOS
@@ -101,25 +101,21 @@ Given(/^a bundle where two gems are out of date$/) do
     'a file named "Gemfile.lock" with:',
     <<-EOS.strip_heredoc
     GEM
-      remote: https://rubygems.org/
+      remote: http://localhost:8808/
       specs:
-        i18n (0.7.0)
-        minitest (5.8.0)
-        papla (0.1.1)
-          i18n
-        rake (10.4.2)
+        ls_first_gem (0.1.0)
+        ls_second_gem (0.1.0)
+        minitest (5.9.0)
+        rake (11.2.2)
 
     PLATFORMS
       ruby
 
     DEPENDENCIES
-      i18n
+      ls_first_gem
+      ls_second_gem
       minitest
-      papla
       rake
-
-    BUNDLED WITH
-       1.10.6
     EOS
   )
 end
@@ -127,14 +123,14 @@ end
 Given(/^a test that will fail for the new version of the gem$/) do
   step('a Rakefile with a passing default task')
   step(
-    'a file named "gem_version_of_papla_test.rb" with:',
+    'a file named "gem_version_of_ls_second_gem_test.rb" with:',
     <<-EOS.strip_heredoc
     require 'minitest/autorun'
-    require 'papla/version'
+    require 'ls_second_gem'
 
-    class TestGemVersionOfPapla < Minitest::Test
+    class TestGemVersionOfLsSecondGem < Minitest::Test
       def test_that_version_equals_expectation
-        assert_equal '0.1.1', Papla::VERSION
+        assert_equal '0.1.0', LsSecondGem::VERSION
       end
     end
     EOS
@@ -146,11 +142,11 @@ Given(/^one of the gems will cause the tests to fail if updated$/) do
 end
 
 Then(/^the good gem should be updated$/) do
-  step('the file "Gemfile.lock" should contain "minitest (5.8.1)"')
+  step('the file "Gemfile.lock" should contain "ls_first_gem (0.2.0)"')
 end
 
 Then(/^the bad gem should stay outdated$/) do
-  step('the file "Gemfile.lock" should contain "papla (0.1.1)"')
+  step('the file "Gemfile.lock" should contain "ls_second_gem (0.1.0)"')
 end
 
 Then(/^I should see that I'm already on latest stable$/) do
@@ -161,7 +157,7 @@ Then(/^I should see that the good gem has been updated$/) do
   step(
     'the output should contain:',
     <<-EOS.strip_heredoc
-    Updating 'minitest' from 5.8.0 to 5.8.1 : success
+    Updating 'ls_first_gem' from 0.1.0 to 0.2.0 : success
     EOS
   )
 end
@@ -170,7 +166,7 @@ Then(/^I should see that the test failed for the bad gem$/) do
   step(
     'the output should contain:',
     <<-EOS.strip_heredoc
-    Updating 'papla' from 0.1.1 to 0.1.2 : Tests failed
+    Updating 'ls_second_gem' from 0.1.0 to 0.2.0 : Tests failed
     EOS
   )
 end
@@ -179,77 +175,81 @@ Then(/^then I should see which gems have been updated$/) do
   step(
     'the output should contain:',
     <<-EOS.strip_heredoc
-    Updated 'papla' from 0.1.1 to 0.1.2
+    Updated 'ls_example_gem' from 0.1.0 to 0.2.0
     success
     EOS
   )
 end
 
 Then(/^all gems in the bundle should be up to date$/) do
-  step('the file "Gemfile.lock" should contain "papla (0.1.2)"')
+  step('the file "Gemfile.lock" should contain "ls_example_gem (0.2.0)"')
 end
 
 Then(/^I should see that the test failed$/) do
   step(
     'the output should contain:',
     <<-EOS.strip_heredoc
-    Updated 'papla' from 0.1.1 to 0.1.2
+    Updated 'ls_example_gem' from 0.1.0 to 0.2.0
     Tests failed
     EOS
   )
 end
 
 Then(/^the bundle should not have changed$/) do
-  step('the file "Gemfile.lock" should contain "papla (0.1.1)"')
+  step('the file "Gemfile.lock" should contain "ls_example_gem (0.1.0)"')
 end
 
 Given(/^a bundle where a gem is out of date and its newer version modifies its dependencies$/) do
+  step('a gemserver with ls_example_gem-0.1.0.gem installed')
+  step('a gemserver with ls_example_gem-0.2.0.gem installed')
+  step('a gemserver with ls_first_gem-0.1.0.gem installed')
+  step('a gemserver with ls_first_gem-0.2.0.gem installed')
+  step('a gemserver with ls_second_gem-0.1.0.gem installed')
+  step('a gemserver with ls_second_gem-0.2.0.gem installed')
+  step('a gemserver with ls_dependencies_gem-0.1.0.gem installed')
+  step('a gemserver with ls_dependencies_gem-0.2.0.gem installed')
+  step('a gemserver with minitest-5.9.0.gem installed')
+  step('a gemserver with rake-11.2.2.gem installed')
   step(
     'a file named "Gemfile" with:',
     <<-EOS.strip_heredoc
-    source 'https://rubygems.org'
-    gem 'capistrano'
+    source 'http://localhost:8808'
+    gem 'ls_dependencies_gem'
+    gem 'minitest'
+    gem 'rake'
     EOS
   )
   step(
     'a file named "Gemfile.lock" with:',
     <<-EOS.strip_heredoc
     GEM
-      remote: https://rubygems.org/
+      remote: http://localhost:8808/
       specs:
-        capistrano (2.15.6)
-          highline
-          net-scp (>= 1.0.0)
-          net-sftp (>= 2.0.0)
-          net-ssh (>= 2.0.14)
-          net-ssh-gateway (>= 1.1.0)
-        highline (1.7.8)
-        net-scp (1.2.1)
-          net-ssh (>= 2.6.5)
-        net-sftp (2.1.2)
-          net-ssh (>= 2.6.5)
-        net-ssh (3.0.1)
-        net-ssh-gateway (1.2.0)
-          net-ssh (>= 2.6.5)
+        ls_dependencies_gem (0.1.0)
+          ls_example_gem (~> 0)
+          ls_first_gem (~> 0)
+        ls_example_gem (0.1.0)
+        ls_first_gem (0.1.0)
+        minitest (5.9.0)
+        rake (11.2.2)
 
     PLATFORMS
       ruby
 
     DEPENDENCIES
-      capistrano
-
-    BUNDLED WITH
-       1.10.6
+      ls_dependencies_gem
+      minitest
+      rake
     EOS
   )
 end
 
 Then(/^I should see that a dependency has been removed$/) do
-  step('the output should contain:', "Removed 'highline'")
+  step('the output should contain:', "Removed 'ls_first_gem'")
 end
 
 Then(/^I should see that a dependency has been added$/) do
-  step('the output should contain:', "Added 'sshkit' 1.")
+  step('the output should contain:', "Added 'ls_second_gem'")
 end
 
 When(/^I run latest_stable$/) do
