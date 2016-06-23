@@ -30,3 +30,8 @@ Feature: Update gem to latest version
     When I run latest_stable
     Then I should see that a dependency has been removed
     And I should see that a dependency has been added
+
+  Scenario: Error while bundling
+    Given a bundle where a dependency cannot be met by the server
+    When I run latest_stable
+    Then I should see a bundling error

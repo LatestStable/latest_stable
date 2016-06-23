@@ -18,7 +18,14 @@ end
 
 old_lockfile = File.read('Gemfile.lock')
 old_gemspecs = parse_lockfile(old_lockfile)
-Bundler.with_clean_env { `bundle update` }
+
+bundle_output = Bundler.with_clean_env { `bundle update` }
+
+if $CHILD_STATUS.exitstatus != 0
+  puts "Error while bundling: #{bundle_output}"
+  exit($CHILD_STATUS.exitstatus)
+end
+
 new_gemspecs = parse_lockfile
 
 changed_gems = (old_gemspecs.keys + new_gemspecs.keys).uniq.select do |gem_name|

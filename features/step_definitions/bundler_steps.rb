@@ -244,6 +244,35 @@ Given(/^a bundle where a gem is out of date and its newer version modifies its d
   )
 end
 
+Given(/^a bundle where a dependency cannot be met by the server$/) do
+  step(
+    'a file named "Gemfile" with:',
+    <<-EOS.strip_heredoc
+    source 'http://localhost:8808'
+    gem 'ls_example_gem'
+    EOS
+  )
+  step(
+    'a file named "Gemfile.lock" with:',
+    <<-EOS.strip_heredoc
+    GEM
+      remote: http://localhost:8808/
+      specs:
+        ls_example_gem (100.0.0)
+
+    PLATFORMS
+      ruby
+
+    DEPENDENCIES
+      ls_example_gem
+    EOS
+  )
+end
+
+Then(/^I should see a bundling error$/) do
+  step('the output should contain:', 'Error while bundling:')
+end
+
 Then(/^I should see that a dependency has been removed$/) do
   step('the output should contain:', "Removed 'ls_first_gem'")
 end
